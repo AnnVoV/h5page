@@ -29,3 +29,19 @@ if(window.orientation == 90){
        $('#wp').css('webkitTransform',value);
 }
 这种方法只能适用于单个滚屏页面
+
+
+
+设备android 或者ios 判断
+
+ var u = navigator.userAgent, app = navigator.appVersion;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+    var checkMobileIOS = function(){
+      if(isiOS){
+        return true;
+      }else{
+        return false;
+      }
+    }
