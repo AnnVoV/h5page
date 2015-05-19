@@ -2,7 +2,8 @@ $(function(){
     var index = 0,
     width = $(window).width(),
     height = $(window).height(),
-    sceenHeight,
+    screenHeight = window.screen.height,
+    isNi = false,
     $wp = $("#wp"),
     $wpInner = $("#wp-inner"),
     $pages = $(".page"),
@@ -98,31 +99,86 @@ function moveTo(arg, anim) {
 }
 
 //对屏幕进行横屏旋转限制
-$('body').on('orientationchange',function(){
-    if(window.orientation == 90){
+$(window).on('orientationchange',function(){
+   var nowHeight = screenHeight;
+   if(!checkMobileIOS()){
+        //android 设备
+        nowHeight = $(window).height();
+        $('#wp').css('width',nowHeight);
+    }else{
+        nowHeight = screenHeight;
         $('#wp').css('width',width);
-        $('#wp').css('height',window.screen.height);
+    }
+
+
+
+
+    if(window.orientation == 90){
+        //alert('shunshizhen');
+        isNi = true;
+        $('#wp').css('height',screenHeight);
         $pages.each(function(index, element) {
             // 赋值高度因为高度会变化
-            $(element).height(window.screen.height);
+            $(element).height(screenHeight);
          });
         $('#wp').css('webkitTransformOrigin','0% 0%');
-        var value = 'rotate(-90deg) translateX(-'+width+'px )';
+        if(!checkMobileIOS()){
+            //Android 设备
+            var value = 'rotate(-90deg) translateX(-'+nowHeight+'px )';
+            $('#wp').css('webkitTransform',value);
+            document.body.width = nowHeight;
+            
+        }else{
+            //IOS 设备
+            var value = 'rotate(-90deg) translateX(-'+width+'px )';
+            $('#wp').css('webkitTransform',value);
+            document.body.width = width;
+        }
+
+
+
+    }else if(window.orientation == 0){
+        $('#wp').css('width',width);
+        $('#wp').css('height',height);
+        $pages.each(function(index, element) {
+            // 赋值高度因为高度会变化
+            $(element).height(height);
+         });
+        $('#wp').css('webkitTransformOrigin','0% 0%');
+        var value = 'rotate(0deg) translateX(0px)';
         $('#wp').css('webkitTransform',value);
         document.body.width = width;
-    }else if(window.orientation == 0){
-        window.location.reload();
     }else if(window.orientation == -90){
-        $('#wp').css('width',width);
-        $('#wp').css('height',window.screen.height);
+        isNi = false;
+        $('#wp').css('height',screenHeight);
         $pages.each(function(index, element) {
             // 赋值高度
-            $(element).height(window.screen.height);
+            $(element).height(screenHeight);
         });
         $('#wp').css('webkitTransformOrigin','0% 100%');
-        var value = 'rotate(90deg) translateX(-'+window.screen.height+'px )';
+        var value = 'rotate(90deg) translateX(-'+screenHeight+'px )';
         $('#wp').css('webkitTransform',value);
-        document.body.width = width;
+        // document.body.width = width;
+        if(!checkMobileIOS()){
+            //Android 设备
+            document.body.width = nowHeight;
+        }else{
+            //IOS
+            document.body.width = width;
         }
-    });         
+    }
+ });
+
+    var u = navigator.userAgent, app = navigator.appVersion;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端或者uc浏览器
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+    var checkMobileIOS = function(){
+      if(isiOS){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
 });
